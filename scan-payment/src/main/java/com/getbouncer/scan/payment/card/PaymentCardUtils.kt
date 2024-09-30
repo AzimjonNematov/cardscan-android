@@ -136,6 +136,9 @@ private val ISSUER_TABLE: List<IssuerData> = listOf(
     IssuerData(676770..676770, CardIssuer.MasterCard, (16..19).toList(), listOf(3), LengthPanValidator + LuhnPanValidator),
     IssuerData(676774..676774, CardIssuer.MasterCard, (16..19).toList(), listOf(3), LengthPanValidator + LuhnPanValidator),
     IssuerData(400000..499999, CardIssuer.Visa, (16..19).toList(), listOf(3), LengthPanValidator + LuhnPanValidator),
+    IssuerData(860000..869999, CardIssuer.Uzcard, (16..19).toList(), listOf(3), LengthPanValidator + LuhnPanValidator),
+    IssuerData(986000..986999, CardIssuer.Humo, (16..19).toList(), listOf(3), LengthPanValidator + LuhnPanValidator),
+    IssuerData(998700..998799, CardIssuer.Atto, (16..19).toList(), listOf(3), LengthPanValidator + LuhnPanValidator),
 )
 
 /**

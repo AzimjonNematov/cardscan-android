@@ -105,14 +105,14 @@ if (secretPropsFile.exists()) {
 }
 
 nexusPublishing {
-    repositories {
-        sonatype {
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            packageGroup = publishGroupId
-            stagingProfileId = sonatypeStagingProfileId
-            username = ossrhUsername
-            password = ossrhPassword
-        }
-    }
+//    repositories {
+//        sonatype {
+//            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+//            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+//            packageGroup = publishGroupId
+//            stagingProfileId = sonatypeStagingProfileId
+//            username = ossrhUsername
+//            password = ossrhPassword
+//        }
+//    }
 }

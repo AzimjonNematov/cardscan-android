@@ -46,10 +46,10 @@ import com.getbouncer.scan.payment.card.PaymentCardUtils;
 import com.getbouncer.scan.ui.ViewFinderBackground;
 import com.getbouncer.scan.ui.util.ViewExtensionsKt;
 
-import java.util.Locale;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 import kotlin.Unit;
 import kotlin.coroutines.CoroutineContext;
@@ -94,7 +94,7 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
      * CardScan uses kotlin coroutines to run multiple analyzers in parallel for maximum image
      * throughput. This coroutine context binds the coroutines to this activity, so that if this
      * activity is terminated, all coroutines are terminated and there is no work leak.
-     *
+     * <p>
      * Additionally, this specifies which threads the coroutines will run on. Normally, the default
      * dispatchers should be used so that coroutines run on threads bound by the number of CPU
      * cores.
@@ -102,7 +102,7 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
     @NotNull
     @Override
     public CoroutineContext getCoroutineContext() {
-        return Dispatchers.getDefault();
+        return (CoroutineContext) Dispatchers.getDefault();
     }
 
     @Override
@@ -143,8 +143,8 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
         // Allow the user to set the focus of the camera by tapping on the view finder.
         viewFinderWindow.setOnTouchListener((v, event) -> {
             cameraAdapter.setFocus(new PointF(
-                event.getX() + viewFinderWindow.getLeft(), 
-                event.getY() + viewFinderWindow.getTop())
+                    event.getX() + viewFinderWindow.getLeft(),
+                    event.getY() + viewFinderWindow.getTop())
             );
             return true;
         });
@@ -175,9 +175,9 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
      */
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(
-            this,
-            new String[] { Manifest.permission.CAMERA },
-            PERMISSION_REQUEST_CODE
+                this,
+                new String[]{Manifest.permission.CAMERA},
+                PERMISSION_REQUEST_CODE
         );
     }
 
@@ -187,9 +187,9 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
      */
     @Override
     public void onRequestPermissionsResult(
-        int requestCode,
-        @NotNull String[] permissions,
-        @NotNull int[] grantResults
+            int requestCode,
+            @NotNull String[] permissions,
+            @NotNull int[] grantResults
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -208,15 +208,15 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
     private void showPermissionDeniedDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.bouncer_camera_permission_denied_message)
-            .setPositiveButton(
-                R.string.bouncer_camera_permission_denied_ok,
-                (dialog, which) -> requestCameraPermission()
-            )
-            .setNegativeButton(
-                R.string.bouncer_camera_permission_denied_cancel,
-                (dialog, which) -> startScan()
-            )
-            .show();
+                .setPositiveButton(
+                        R.string.bouncer_camera_permission_denied_ok,
+                        (dialog, which) -> requestCameraPermission()
+                )
+                .setNegativeButton(
+                        R.string.bouncer_camera_permission_denied_cancel,
+                        (dialog, which) -> startScan()
+                )
+                .show();
     }
 
     /**
@@ -233,10 +233,10 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
 
             // Create a camera adapter and bind it to this activity.
             cameraAdapter = CameraSelectorKt.getCameraAdapter(
-                this,
-                cameraPreview,
-                MINIMUM_RESOLUTION,
-                this
+                    this,
+                    cameraPreview,
+                    MINIMUM_RESOLUTION,
+                    this
             );
             cameraAdapter.bindToLifecycle(this);
             cameraAdapter.withFlashSupport(supported -> {
@@ -246,17 +246,17 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
 
             // Create and start a CardScanFlow which will handle the business logic of the scan
             cardScanFlow = new CardScanFlow(
-                true,
-                true,
-                aggregateResultListener,
-                this
+                    true,
+                    true,
+                    aggregateResultListener,
+                    this
             );
             cardScanFlow.startFlow(
-                this,
-                cameraAdapter.getImageStream(),
-                ViewExtensionsKt.asRect(viewFinderWindow),
-                this,
-                this
+                    this,
+                    cameraAdapter.getImageStream(),
+                    ViewExtensionsKt.asRect(viewFinderWindow),
+                    this,
+                    this
             );
         });
     }
@@ -282,8 +282,8 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
     private void analyzerFailureCancelScan(@Nullable final Throwable cause) {
         Log.e(Config.getLogTag(), "Canceling scan due to analyzer error", cause);
         new AlertDialog.Builder(this)
-            .setMessage("Analyzer failure")
-            .show();
+                .setMessage("Analyzer failure")
+                .show();
         closeScanner();
     }
 
@@ -293,8 +293,8 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
     private void cameraErrorCancelScan(@Nullable final Throwable cause) {
         Log.e(Config.getLogTag(), "Canceling scan due to camera error", cause);
         new AlertDialog.Builder(this)
-            .setMessage("Camera error")
-            .show();
+                .setMessage("Camera error")
+                .show();
         closeScanner();
     }
 
@@ -303,8 +303,8 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
      */
     private void userCancelScan() {
         new AlertDialog.Builder(this)
-            .setMessage("Scan Canceled by user")
-            .show();
+                .setMessage("Scan Canceled by user")
+                .show();
         closeScanner();
     }
 
@@ -312,25 +312,25 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
      * Show the completed scan results
      */
     private void completeScan(
-        @Nullable String expiryMonth,
-        @Nullable String expiryYear,
-        @Nullable String cardNumber,
-        @Nullable String issuer,
-        @Nullable String name,
-        @Nullable String error
+            @Nullable String expiryMonth,
+            @Nullable String expiryYear,
+            @Nullable String cardNumber,
+            @Nullable String issuer,
+            @Nullable String name,
+            @Nullable String error
     ) {
         new AlertDialog.Builder(this)
-            .setMessage(String.format(
-                Locale.getDefault(),
-                "%s\n%s\n%s/%s\n%s\n%s",
-                cardNumber,
-                issuer,
-                expiryMonth,
-                expiryYear,
-                name,
-                error
-            ))
-            .show();
+                .setMessage(String.format(
+                        Locale.getDefault(),
+                        "%s\n%s\n%s/%s\n%s\n%s",
+                        cardNumber,
+                        issuer,
+                        expiryMonth,
+                        expiryYear,
+                        name,
+                        error
+                ))
+                .show();
         closeScanner();
     }
 
@@ -347,12 +347,12 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
             cardScanFlow.cancelFlow();
         }
         BouncerApi.uploadScanStats(
-            this,
-            Stats.INSTANCE.getInstanceId(),
-            Stats.INSTANCE.getScanId(),
-            Device.fromContext(this),
-            AppDetails.fromContext(this),
-            ScanStatistics.fromStats()
+                this,
+                Stats.INSTANCE.getInstanceId(),
+                Stats.INSTANCE.getScanId(),
+                Device.fromContext(this),
+                AppDetails.fromContext(this),
+                ScanStatistics.fromStats()
         );
     }
 
@@ -397,12 +397,12 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
             @Nullable final String expiryMonth;
             @Nullable final String expiryYear;
             if (result.getExpiryMonth() != null &&
-                result.getExpiryYear() != null &&
-                CardExpiryKt.isValidExpiry(
-                    null,
-                    result.getExpiryMonth(),
-                    result.getExpiryYear()
-                )
+                    result.getExpiryYear() != null &&
+                    CardExpiryKt.isValidExpiry(
+                            null,
+                            result.getExpiryMonth(),
+                            result.getExpiryYear()
+                    )
             ) {
                 expiryMonth = result.getExpiryMonth();
                 expiryYear = result.getExpiryYear();
@@ -414,12 +414,12 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
             new Handler(getMainLooper()).post(() -> {
                 // Only show the expiry dates that are not expired
                 completeScan(
-                    expiryMonth,
-                    expiryYear,
-                    SingleActivityDemo.this.pan,
-                    PaymentCardUtils.getCardIssuer(SingleActivityDemo.this.pan).getDisplayName(),
-                    result.getName(),
-                    result.getErrorString()
+                        expiryMonth,
+                        expiryYear,
+                        SingleActivityDemo.this.pan,
+                        PaymentCardUtils.getCardIssuer(SingleActivityDemo.this.pan).getDisplayName(),
+                        result.getName(),
+                        result.getErrorString()
                 );
             });
         }
@@ -429,92 +429,92 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
             MainLoopAggregator.InterimResult,
             MainLoopAggregator.FinalResult> aggregateResultListener =
             new BlockingAggregateResultListener<
-                MainLoopAggregator.InterimResult,
-                MainLoopAggregator.FinalResult>() {
+                    MainLoopAggregator.InterimResult,
+                    MainLoopAggregator.FinalResult>() {
 
-        /**
-         * An interim result has been received from the scan, the scan is still running. Update your
-         * UI as necessary here to display the progress of the scan.
-         */
-        @Override
-        public void onInterimResultBlocking(MainLoopAggregator.InterimResult interimResult) {
-            new Handler(getMainLooper()).post(() -> {
-                final MainLoopState mainLoopState = interimResult.getState();
+                /**
+                 * An interim result has been received from the scan, the scan is still running. Update your
+                 * UI as necessary here to display the progress of the scan.
+                 */
+                @Override
+                public void onInterimResultBlocking(MainLoopAggregator.InterimResult interimResult) {
+                    new Handler(getMainLooper()).post(() -> {
+                        final MainLoopState mainLoopState = interimResult.getState();
 
-                if (mainLoopState instanceof MainLoopState.Initial) {
-                    // In initial state, show no card found
-                    setStateNotFound();
+                        if (mainLoopState instanceof MainLoopState.Initial) {
+                            // In initial state, show no card found
+                            setStateNotFound();
 
-                } else if (mainLoopState instanceof MainLoopState.PanFound) {
-                    // If OCR is running and a valid card number is visible, display it
-                    final MainLoopState.PanFound state = (MainLoopState.PanFound) mainLoopState;
-                    final String pan = state.getMostLikelyPan();
-                    if (pan != null) {
-                        cardPanTextView.setText(PanFormatterKt.formatPan(pan));
-                        ViewExtensionsKt.show(cardPanTextView);
-                    }
-                    setStateFound();
+                        } else if (mainLoopState instanceof MainLoopState.PanFound) {
+                            // If OCR is running and a valid card number is visible, display it
+                            final MainLoopState.PanFound state = (MainLoopState.PanFound) mainLoopState;
+                            final String pan = state.getMostLikelyPan();
+                            if (pan != null) {
+                                cardPanTextView.setText(PanFormatterKt.formatPan(pan));
+                                ViewExtensionsKt.show(cardPanTextView);
+                            }
+                            setStateFound();
 
-                } else if (mainLoopState instanceof MainLoopState.CardSatisfied) {
-                    // If OCR is running and a valid card number is visible, display it
-                    final MainLoopState.CardSatisfied state =
-                            (MainLoopState.CardSatisfied) mainLoopState;
-                    final String pan = state.getMostLikelyPan();
-                    if (pan != null) {
-                        cardPanTextView.setText(PanFormatterKt.formatPan(pan));
-                        ViewExtensionsKt.show(cardPanTextView);
-                    }
+                        } else if (mainLoopState instanceof MainLoopState.CardSatisfied) {
+                            // If OCR is running and a valid card number is visible, display it
+                            final MainLoopState.CardSatisfied state =
+                                    (MainLoopState.CardSatisfied) mainLoopState;
+                            final String pan = state.getMostLikelyPan();
+                            if (pan != null) {
+                                cardPanTextView.setText(PanFormatterKt.formatPan(pan));
+                                ViewExtensionsKt.show(cardPanTextView);
+                            }
 
-                    setStateFound();
+                            setStateFound();
 
-                } else if (mainLoopState instanceof MainLoopState.PanSatisfied) {
-                    // If OCR is running and a valid card number is visible, display it
-                    final MainLoopState.PanSatisfied state =
-                            (MainLoopState.PanSatisfied) mainLoopState;
-                    final String pan = state.getPan();
-                    if (pan != null) {
-                        cardPanTextView.setText(PanFormatterKt.formatPan(pan));
-                        ViewExtensionsKt.show(cardPanTextView);
-                    }
+                        } else if (mainLoopState instanceof MainLoopState.PanSatisfied) {
+                            // If OCR is running and a valid card number is visible, display it
+                            final MainLoopState.PanSatisfied state =
+                                    (MainLoopState.PanSatisfied) mainLoopState;
+                            final String pan = state.getPan();
+                            if (pan != null) {
+                                cardPanTextView.setText(PanFormatterKt.formatPan(pan));
+                                ViewExtensionsKt.show(cardPanTextView);
+                            }
 
-                    setStateFound();
+                            setStateFound();
 
-                } else if (mainLoopState instanceof MainLoopState.Finished) {
-                    // Once the main loop has finished, the camera can stop
-                    cameraAdapter.unbindFromLifecycle(SingleActivityDemo.this);
-                    setStateCorrect();
+                        } else if (mainLoopState instanceof MainLoopState.Finished) {
+                            // Once the main loop has finished, the camera can stop
+                            cameraAdapter.unbindFromLifecycle(SingleActivityDemo.this);
+                            setStateCorrect();
 
+                        }
+                    });
                 }
-            });
-        }
 
-        /**
-         * The scan has completed and the final result is available. Close the scanner and make use
-         * of the final result.
-         */
-        @Override
-        public void onResultBlocking(MainLoopAggregator.FinalResult result) {
-            SingleActivityDemo.this.pan = result.getPan();
-            cardScanFlow.launchCompletionLoop(
-                SingleActivityDemo.this,
-                completionLoopListener,
-                cardScanFlow.selectCompletionLoopFrames(
-                    result.getAverageFrameRate(),
-                    result.getSavedFrames()
-                ),
-                result.getAverageFrameRate().compareTo(Config.getSlowDeviceFrameRate()) > 0,
-                SingleActivityDemo.this
-            );
-        }
+                /**
+                 * The scan has completed and the final result is available. Close the scanner and make use
+                 * of the final result.
+                 */
+                @Override
+                public void onResultBlocking(MainLoopAggregator.FinalResult result) {
+                    SingleActivityDemo.this.pan = result.getPan();
+                    cardScanFlow.launchCompletionLoop(
+                            SingleActivityDemo.this,
+                            completionLoopListener,
+                            cardScanFlow.selectCompletionLoopFrames(
+                                    result.getAverageFrameRate(),
+                                    result.getSavedFrames()
+                            ),
+                            result.getAverageFrameRate().compareTo(Config.getSlowDeviceFrameRate()) > 0,
+                            SingleActivityDemo.this
+                    );
+                }
 
-        /**
-         * The scan was reset (usually because the activity was backgrounded). Reset the UI.
-         */
-        @Override
-        public void onResetBlocking() {
-            new Handler(getMainLooper()).post(() -> setStateNotFound());
-        }
-    };
+                /**
+                 * The scan was reset (usually because the activity was backgrounded). Reset the UI.
+                 */
+                @Override
+                public void onResetBlocking() {
+                    new Handler(getMainLooper()).post(() -> setStateNotFound());
+                }
+            };
 
     /**
      * Display a blue border tracing the outline of the card to indicate that the card is identified
@@ -523,7 +523,7 @@ public class SingleActivityDemo extends AppCompatActivity implements CameraError
     private void setStateFound() {
         if (scanState == State.FOUND) return;
         ViewExtensionsKt.startAnimation(viewFinderBorder,
-            R.drawable.bouncer_card_border_found_long);
+                R.drawable.bouncer_card_border_found_long);
         ViewExtensionsKt.hide(processingOverlay);
         scanState = State.FOUND;
     }
